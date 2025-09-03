@@ -20,7 +20,7 @@ def new_list(request):
 def view_list(request, list_id):
     our_list = List.objects.get(id=list_id)
     error = None
-    
+
     if request.method == "POST":
         try: 
             item = Item(text=request.POST["item_text"], list=our_list)
