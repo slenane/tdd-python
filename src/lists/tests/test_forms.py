@@ -20,12 +20,17 @@ class ItemFormTest(TestCase):
         
     def test_form_validation_for_blank_items(self):
         form = ItemForm(data={"text": ""})
-        form.save()
-
-    def test_form_validation_for_blank_items(self):
-        form = ItemForm(data={"text": ""})
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors["text"], [EMPTY_ITEM_ERROR])
+        
+    def test_invalid_form_has_bootstrap_is_invalid_css_class(self):
+        form = ItemForm(data={"text": ""})
+        self.assertFalse(form.is_valid())
+        field = form.fields["text"]
+        self.assertEqual(
+            field.widget.attrs["class"],
+            "form-control form-control-lg is-invalid"
+        )
         
     def test_form_save_handles_saving_to_a_list(self):
         mylist = List.objects.create()
@@ -41,6 +46,13 @@ class ExistingListItemFormTest(TestCase):
         list_ = List.objects.create()
         form = ExistingListItemForm(for_list=list_)
         self.assertIn('placeholder="Enter a to-do item"', form.as_p())
+        
+    def test_form_save(self):
+        mylist = List.objects.create()
+        form = ExistingListItemForm(for_list=mylist, data={"text": "hi"})
+        self.assertTrue(form.is_valid())
+        new_item = form.save()
+        self.assertEqual(new_item, Item.objects.get())
         
     def test_form_validation_for_blank_items(self):
         list_ = List.objects.create()
