@@ -10,4 +10,7 @@ class List(models.Model):
 class Item(models.Model):
     text = models.TextField(default="")
     list = models.ForeignKey(List, default=None, on_delete=models.CASCADE)
+    
+    class Meta:
+        unique_together = ('list', 'text')
 
